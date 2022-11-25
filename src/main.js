@@ -1,12 +1,33 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import Vue from "vue";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import axios from "axios";
 
-Vue.config.productionTip = false
+import { setHeaderToken } from "../utils/auth";
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+import "bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+axios.defaults.baseURL = "http://localhost:8000/api/";
+
+Vue.config.productionTip = false;
+
+const token = localStorage.getItem("token");
+
+if (token) {
+  setHeaderToken(token);
+}
+
+store
+  .dispatch("get_user", token)
+  .then(() => {
+    new Vue({
+      router,
+      store,
+      render: (h) => h(App),
+    }).$mount("#app");
+  })
+  .catch((error) => {
+    console.error(error);
+  });
